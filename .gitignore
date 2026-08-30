@@ -7,3 +7,4 @@ backend/._*
 backend/test.ipynb
 .SD_STORE
 .gitignore
+cloudfalre_installs/__pycache__

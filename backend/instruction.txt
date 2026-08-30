@@ -1,5 +1,1 @@
-sample instruction #1
-
-Enter you prompt here
-
-And wait the queque will be initiateds
+Let me send a simple instruction

@@ -90,23 +90,8 @@
             letter-spacing: 0.04em;
         }
 
-        .title-controls {
-            display: flex;
-            gap: 5px;
-        }
 
-        .title-control {
-            width: 13px;
-            height: 13px;
 
-            background: #d9d9d2;
-
-            border:
-                1px solid #ffffff;
-
-            box-shadow:
-                inset -1px -1px 0 #777;
-        }
 
         .content {
             padding: 28px;
@@ -278,12 +263,9 @@
 
         #result {
             min-height: 140px;
+            background-color: white;
 
             padding: 15px;
-
-            background: var(--terminal-bg);
-            color: var(--terminal-text);
-
             border:
                 1px solid #000;
 
@@ -300,7 +282,7 @@
 
         #result:empty::before {
             content: "Awaiting model output...";
-            color: #657062;
+            color: #ffffff;
         }
 
         .status-line {
@@ -335,7 +317,7 @@
             inset: 0;
 
             background:
-                rgba(20, 20, 20, 0.22);
+                rgba(252, 252, 252, 0.22);
 
             z-index: 999;
         }
@@ -453,13 +435,7 @@
 
     <div class="title-bar">
 
-        <span>LLM_INTERFACE.EXE</span>
 
-        <div class="title-controls">
-            <div class="title-control"></div>
-            <div class="title-control"></div>
-            <div class="title-control"></div>
-        </div>
 
     </div>
 
@@ -467,10 +443,6 @@
     <div class="content">
 
         <h1>Demonstration Interface</h1>
-
-        <p class="subtitle">
-            Local Language Model / Interactive Session
-        </p>
 
 
         <section>
@@ -548,14 +520,6 @@
     </div>
 
 
-    <div class="status-line">
-
-        <span>STATUS: READY</span>
-
-        <span>LLM DEMONSTRATION SYSTEM</span>
-
-    </div>
-
 </div>
 
 
@@ -565,7 +529,7 @@
 <div id="queue-popup">
 
     <div class="queue-title">
-        SYSTEM MESSAGE
+        MESSAGE
     </div>
 
     <div class="queue-body">

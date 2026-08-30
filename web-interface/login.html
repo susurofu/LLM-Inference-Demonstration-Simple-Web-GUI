@@ -1,48 +1,481 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | LLM GUI</title>
+
+    <style>
+        :root {
+            --bg: #ecebe6;
+
+            --panel: #f8f8f4;
+            --panel-dark: #deded7;
+
+            --text: #161616;
+            --muted: #66665f;
+
+            --border: #8b8b84;
+            --border-light: #c9c9c2;
+
+            --accent: #244a72;
+            --accent-hover: #173552;
+
+            --error: #8b2d2d;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            min-height: 100%;
+        }
+
+        body {
+            margin: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 30px 20px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(0, 0, 0, 0.018) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    rgba(0, 0, 0, 0.018) 1px,
+                    transparent 1px
+                ),
+                var(--bg);
+
+            background-size: 18px 18px;
+
+            color: var(--text);
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            font-size: 14px;
+        }
+
+
+        /* Main window */
+
+        .window {
+            width: min(430px, 100%);
+
+            background: var(--panel);
+
+            border: 1px solid var(--border);
+
+            box-shadow:
+                4px 4px 0 rgba(0, 0, 0, 0.15);
+        }
+
+
+        /* Classic title bar */
+
+        .title-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            min-height: 31px;
+
+            padding: 7px 10px;
+
+            background: var(--accent);
+
+            color: white;
+
+            font-family:
+                "Courier New",
+                Courier,
+                monospace;
+
+            font-size: 12px;
+            font-weight: bold;
+
+            letter-spacing: 0.05em;
+        }
+
+        .title-bar-status {
+            font-size: 10px;
+            font-weight: normal;
+
+            opacity: 0.75;
+        }
+
+
+        /* Main content */
+
+        .content {
+            padding: 30px;
+        }
+
+        h1 {
+            margin:
+                0
+                0
+                7px;
+
+            font-family:
+                "Courier New",
+                Courier,
+                monospace;
+
+            font-size: 22px;
+            font-weight: normal;
+
+            letter-spacing: -0.04em;
+        }
+
+        .subtitle {
+            margin:
+                0
+                0
+                28px;
+
+            color: var(--muted);
+
+            font-family:
+                "Courier New",
+                Courier,
+                monospace;
+
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+
+        /* Login section */
+
+        h2 {
+            margin:
+                0
+                0
+                10px;
+
+            font-family:
+                "Courier New",
+                Courier,
+                monospace;
+
+            font-size: 13px;
+
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        h2::before {
+            content: "> ";
+            color: var(--accent);
+        }
+
+        .login-panel {
+            padding: 18px;
+
+            background: white;
+
+            border: 1px solid var(--border-light);
+        }
+
+
+        /* Form */
+
+        label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-family:
+                "Courier New",
+                Courier,
+                monospace;
+
+            font-size: 12px;
+
+            font-weight: bold;
+        }
+
+        input[type="password"] {
+            display: block;
+
+            width: 100%;
+
+            padding: 10px 11px;
+
+            background: white;
+
+            border: 1px solid var(--border);
+            border-radius: 0;
+
+            color: var(--text);
+
+            font-family:
+                "Courier New",
+                Courier,
+                monospace;
+
+            font-size: 14px;
+
+            outline: none;
+        }
+
+        input[type="password"]:focus {
+            border-color: var(--accent);
+
+            box-shadow:
+                inset 0 0 0 1px var(--accent);
+        }
+
+
+        /* Button */
+
+        .button-row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+
+            margin-top: 14px;
+        }
+
+        button {
+            min-width: 95px;
+
+            padding: 7px 17px;
+
+            background: var(--accent);
+            color: white;
+
+            border: 1px solid #142d46;
+            border-radius: 0;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            font-size: 13px;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+        }
+
+        button:active {
+            transform: translate(1px, 1px);
+        }
+
+
+        /* Error message */
+
+        #error {
+            display: none;
+
+            margin:
+                14px
+                0
+                0;
+
+            padding: 8px 10px;
+
+            border: 1px solid #b88585;
+
+            background: #f7e8e8;
+
+            color: var(--error);
+
+            font-family:
+                "Courier New",
+                Courier,
+                monospace;
+
+            font-size: 12px;
+        }
+
+        #error.visible {
+            display: block;
+        }
+
+        #error::before {
+            content: "ERROR: ";
+            font-weight: bold;
+        }
+
+
+        /* Bottom system-like status bar */
+
+        .status-line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 7px 10px;
+
+            background: var(--panel-dark);
+
+            border-top: 1px solid var(--border);
+
+            color: var(--muted);
+
+            font-family:
+                "Courier New",
+                Courier,
+                monospace;
+
+            font-size: 10px;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+
+            background: #52724e;
+
+            border: 1px solid #334b30;
+        }
+
+
+        /* Mobile */
+
+        @media (max-width: 500px) {
+
+            body {
+                padding: 15px 10px;
+            }
+
+            .content {
+                padding: 22px;
+            }
+
+            h1 {
+                font-size: 19px;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+
+    </style>
 </head>
+
 
 <body>
 
-    <h1>Demonstration Interface</h1>
+<div class="window">
 
-    <form action="/login" method="post">
 
-        <label for="password">
-            Password:
-        </label>
+    <div class="title-bar">
 
-        <input
-            type="password"
-            id="password"
-            name="password"
-            required
-            autofocus
-        >
 
-        <button type="submit">
+
+    </div>
+
+
+    <div class="content">
+
+        <h1>
+            Demonstration Interface
+        </h1>
+
+
+
+        <h2>
             Login
-        </button>
-
-    </form>
-
-    <p id="error"></p>
+        </h2>
 
 
-    <script>
-        const params = new URLSearchParams(
+        <div class="login-panel">
+
+            <form action="/login" method="post">
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    autocomplete="current-password"
+                    required
+                    autofocus
+                >
+
+
+                <div class="button-row">
+
+                    <button type="submit">
+                        Login
+                    </button>
+
+                </div>
+
+            </form>
+
+
+            <p id="error"></p>
+
+        </div>
+
+    </div>
+
+
+    <div class="status-line">
+
+       
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+    const params =
+        new URLSearchParams(
             window.location.search
         );
 
-        if (params.get("error") === "1") {
-            document.getElementById("error").innerText =
-                "Incorrect password.";
-        }
-    </script>
+    const errorElement =
+        document.getElementById("error");
+
+
+    if (params.get("error") === "1") {
+
+        errorElement.innerText =
+            "Incorrect password.";
+
+        errorElement.classList.add(
+            "visible"
+        );
+
+    }
+
+</script>
+
 
 </body>
 

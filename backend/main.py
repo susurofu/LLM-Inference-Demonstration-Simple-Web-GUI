@@ -19,12 +19,20 @@ from .ollama_engine import OllamaEngine
 BASE_DIR = Path(__file__).resolve().parent
 FRONTEND_DIR = BASE_DIR.parent / "web-interface"
 
+#model 
+model_name_path = BASE_DIR / "model.txt"
+try:
+    with open(model_name_path, encoding="utf-8") as f:
+        model_name = f.read()
+except FileNotFoundError:
+    print("File with the model does not exist")
+
+    
+
+
 env_path = BASE_DIR / ".env"
 
 load_dotenv(env_path)
-
-print(BASE_DIR)
-
 
 
 load_dotenv(BASE_DIR / "backend" / ".env")
@@ -65,7 +73,8 @@ async def generation_worker():
         job.status = "processing"
 
         try:
-            ollama_engine.set_model("phi4-mini")
+
+            ollama_engine.set_model(model_name)
 
             response = await asyncio.to_thread(
                 ollama_engine.process_prompt,
