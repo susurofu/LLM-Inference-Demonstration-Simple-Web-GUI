@@ -3,89 +3,609 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>LLM GUI</title>
+
+    <style>
+        :root {
+            --bg: #ecebe6;
+            --panel: #f8f8f4;
+            --panel-dark: #deded7;
+
+            --text: #161616;
+            --muted: #66665f;
+
+            --border: #8b8b84;
+            --border-light: #c9c9c2;
+
+            --accent: #244a72;
+            --accent-hover: #173552;
+
+            --terminal-bg: #111510;
+            --terminal-text: #b7d7aa;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(0, 0, 0, 0.018) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    rgba(0, 0, 0, 0.018) 1px,
+                    transparent 1px
+                ),
+                var(--bg);
+
+            background-size: 18px 18px;
+
+            color: var(--text);
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            font-size: 14px;
+        }
+
+        .window {
+            width: min(900px, 100%);
+            margin: 0 auto;
+
+            background: var(--panel);
+
+            border: 1px solid var(--border);
+
+            box-shadow:
+                3px 3px 0 rgba(0, 0, 0, 0.14);
+        }
+
+        .title-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 8px 11px;
+
+            background: var(--accent);
+            color: white;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 13px;
+            font-weight: bold;
+
+            letter-spacing: 0.04em;
+        }
+
+        .title-controls {
+            display: flex;
+            gap: 5px;
+        }
+
+        .title-control {
+            width: 13px;
+            height: 13px;
+
+            background: #d9d9d2;
+
+            border:
+                1px solid #ffffff;
+
+            box-shadow:
+                inset -1px -1px 0 #777;
+        }
+
+        .content {
+            padding: 28px;
+        }
+
+        h1 {
+            margin:
+                0
+                0
+                7px;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 24px;
+            font-weight: normal;
+
+            letter-spacing: -0.04em;
+        }
+
+        .subtitle {
+            margin:
+                0
+                0
+                30px;
+
+            color: var(--muted);
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 12px;
+        }
+
+        section {
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            margin:
+                0
+                0
+                9px;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 13px;
+
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        h2::before {
+            content: "> ";
+            color: var(--accent);
+        }
+
+        .panel {
+            padding: 15px;
+
+            background: #ffffff;
+
+            border: 1px solid var(--border-light);
+        }
+
+        #file-content {
+            min-height: 45px;
+
+            white-space: pre-wrap;
+            line-height: 1.55;
+        }
+
+        textarea {
+            display: block;
+
+            width: 100%;
+            min-height: 180px;
+
+            padding: 12px;
+
+            resize: vertical;
+
+            background: white;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 0;
+
+            color: var(--text);
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 14px;
+            line-height: 1.5;
+
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: var(--accent);
+
+            box-shadow:
+                inset 0 0 0 1px var(--accent);
+        }
+
+        .button-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-top: 10px;
+        }
+
+        button {
+            min-width: 90px;
+
+            padding: 7px 16px;
+
+            background: var(--panel-dark);
+            color: var(--text);
+
+            border:
+                1px solid #666;
+
+            border-radius: 0;
+
+            box-shadow:
+                inset 1px 1px 0 white,
+                inset -1px -1px 0 #999;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            font-size: 13px;
+
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #e7e7df;
+        }
+
+        button:active {
+            box-shadow:
+                inset 1px 1px 0 #777;
+        }
+
+        #send-button {
+            background: var(--accent);
+            color: white;
+
+            border-color: #142d46;
+
+            box-shadow: none;
+        }
+
+        #send-button:hover {
+            background: var(--accent-hover);
+        }
+
+        #result {
+            min-height: 140px;
+
+            padding: 15px;
+
+            background: var(--terminal-bg);
+            color: var(--terminal-text);
+
+            border:
+                1px solid #000;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 13px;
+            line-height: 1.55;
+
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        #result:empty::before {
+            content: "Awaiting model output...";
+            color: #657062;
+        }
+
+        .status-line {
+            display: flex;
+            justify-content: space-between;
+
+            padding: 7px 10px;
+
+            background: var(--panel-dark);
+
+            border-top:
+                1px solid var(--border);
+
+            color: var(--muted);
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 11px;
+        }
+
+        .logout-form {
+            margin: 0;
+        }
+
+        /* Queue popup background */
+        #queue-overlay {
+            display: none;
+
+            position: fixed;
+            inset: 0;
+
+            background:
+                rgba(20, 20, 20, 0.22);
+
+            z-index: 999;
+        }
+
+        /* Queue window */
+        #queue-popup {
+            display: none;
+
+            position: fixed;
+
+            top: 50%;
+            left: 50%;
+
+            transform:
+                translate(-50%, -50%);
+
+            width: min(390px, calc(100% - 40px));
+
+            background: var(--panel);
+
+            border:
+                1px solid #666;
+
+            box-shadow:
+                4px 4px 0 rgba(0, 0, 0, 0.22);
+
+            z-index: 1000;
+        }
+
+        .queue-title {
+            padding: 7px 9px;
+
+            background: var(--accent);
+            color: white;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .queue-body {
+            padding: 25px;
+        }
+
+        .queue-body h2 {
+            margin-bottom: 12px;
+        }
+
+        #queue-message {
+            margin: 0;
+
+            font-family:
+                "Courier New",
+                monospace;
+
+            line-height: 1.5;
+        }
+
+        .blink {
+            display: inline-block;
+
+            width: 7px;
+            height: 13px;
+
+            margin-left: 4px;
+
+            background: currentColor;
+
+            vertical-align: middle;
+
+            animation:
+                blink 1s steps(1) infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding:
+                    15px
+                    10px;
+            }
+
+            .content {
+                padding: 18px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .button-row {
+                align-items: stretch;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-    <h1>Demonstration Interface</h1>
+<div class="window">
 
-    <h2>Instruction</h2>
+    <div class="title-bar">
 
-    <div id="file-content">
+        <span>LLM_INTERFACE.EXE</span>
+
+        <div class="title-controls">
+            <div class="title-control"></div>
+            <div class="title-control"></div>
+            <div class="title-control"></div>
+        </div>
+
     </div>
 
-    <script>
-        async function loadData() {
-            const response = await fetch("/instruction");
 
-            const data = await response.json();
+    <div class="content">
 
-            document.getElementById("file-content").innerText =
-                data.text;
-        }
+        <h1>Demonstration Interface</h1>
 
-        loadData();
-    </script>
+        <p class="subtitle">
+            Local Language Model / Interactive Session
+        </p>
 
 
+        <section>
 
-<h2>Enter text</h2>
+            <h2>Instruction</h2>
 
+            <div class="panel">
+                <div id="file-content">
+                    Loading...
+                </div>
+            </div>
 
-
-<form id="prompt-form">
-
-    <textarea
-        id="prompt-input"
-        rows="10"
-        cols="80"
-        required
-    ></textarea>
-
-    <button type="submit">
-        Send
-    </button>
-
-</form>
-
-<h2>Response</h2>
-
-<div id="result" rows="10"cols="80"></div>
+        </section>
 
 
+        <section>
+
+            <h2>Input</h2>
+
+            <form id="prompt-form">
+
+                <textarea
+                    id="prompt-input"
+                    rows="10"
+                    required
+                    placeholder="Enter your prompt here..."
+                ></textarea>
+
+                <div class="button-row">
+
+                    <span class="subtitle"
+                          style="margin:0;">
+                        Submit request to model
+                    </span>
+
+                    <button
+                        id="send-button"
+                        type="submit"
+                    >
+                        Send
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
 
 
-    <form action="/logout" method="post">
-        <button type="submit">
-            Logout
-        </button>
-    </form>
+        <section>
+
+            <h2>Response</h2>
+
+            <div id="result"></div>
+
+        </section>
 
 
-<div
-    id="queue-popup"
-    style="
-        display: none;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        border: 1px solid #999;
-        padding: 30px;
-        z-index: 1000;
-    "
->
-    <h2>Please wait</h2>
+        <div class="button-row">
 
-    <p id="queue-message">
-        Your request is waiting in the queue.
-    </p>
+            <span></span>
+
+            <form
+                class="logout-form"
+                action="/logout"
+                method="post"
+            >
+                <button type="submit">
+                    Logout
+                </button>
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <div class="status-line">
+
+        <span>STATUS: READY</span>
+
+        <span>LLM DEMONSTRATION SYSTEM</span>
+
+    </div>
+
 </div>
 
+
+<div id="queue-overlay"></div>
+
+
+<div id="queue-popup">
+
+    <div class="queue-title">
+        SYSTEM MESSAGE
+    </div>
+
+    <div class="queue-body">
+
+        <h2>Please wait</h2>
+
+        <p id="queue-message">
+            Your request is waiting in the queue.
+        </p>
+
+        <p>
+            Processing
+            <span class="blink"></span>
+        </p>
+
+    </div>
+
+</div>
+
+
 <script>
-    const form = document.getElementById("prompt-form");
+
+    async function loadData() {
+
+        const response =
+            await fetch("/instruction");
+
+        const data =
+            await response.json();
+
+        document
+            .getElementById("file-content")
+            .innerText = data.text;
+    }
+
+    loadData();
+
+
+    const form =
+        document.getElementById("prompt-form");
 
     const resultElement =
         document.getElementById("result");
@@ -93,8 +613,37 @@
     const popup =
         document.getElementById("queue-popup");
 
+    const overlay =
+        document.getElementById("queue-overlay");
+
     const queueMessage =
         document.getElementById("queue-message");
+
+    const sendButton =
+        document.getElementById("send-button");
+
+
+    function showQueue(message) {
+
+        queueMessage.innerText =
+            message;
+
+        popup.style.display =
+            "block";
+
+        overlay.style.display =
+            "block";
+    }
+
+
+    function hideQueue() {
+
+        popup.style.display =
+            "none";
+
+        overlay.style.display =
+            "none";
+    }
 
 
     form.addEventListener(
@@ -103,12 +652,17 @@
 
             event.preventDefault();
 
-            const text =
-                document.getElementById(
-                    "prompt-input"
-                ).value;
+            sendButton.disabled = true;
 
-            const formData = new FormData();
+            const text =
+                document
+                    .getElementById(
+                        "prompt-input"
+                    )
+                    .value;
+
+            const formData =
+                new FormData();
 
             formData.append(
                 "text",
@@ -118,40 +672,52 @@
             resultElement.innerText =
                 "Submitting request...";
 
-            const response = await fetch(
-                "/process_prompt",
-                {
-                    method: "POST",
-                    body: formData
+            try {
+
+                const response =
+                    await fetch(
+                        "/process_prompt",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+                const data =
+                    await response.json();
+
+                const jobId =
+                    data.job_id;
+
+
+                if (data.users_ahead > 0) {
+
+                    showQueue(
+                        `${data.users_ahead} user(s) are before you.`
+                    );
+
+                } else {
+
+                    showQueue(
+                        "Your request is being processed."
+                    );
+
                 }
-            );
 
-            const data =
-                await response.json();
+                await pollJob(jobId);
 
-            const jobId =
-                data.job_id;
+            } catch (error) {
 
+                hideQueue();
 
-            if (data.users_ahead > 0) {
+                resultElement.innerText =
+                    "Connection error: " +
+                    error;
 
-                popup.style.display =
-                    "block";
-
-                queueMessage.innerText =
-                    `${data.users_ahead} user(s) are before you.`;
-
-            } else {
-
-                popup.style.display =
-                    "block";
-
-                queueMessage.innerText =
-                    "Your request is being processed.";
+                sendButton.disabled =
+                    false;
             }
 
-
-            pollJob(jobId);
         }
     );
 
@@ -160,60 +726,62 @@
 
         while (true) {
 
-            const response = await fetch(
-                `/job/${jobId}`
-            );
+            const response =
+                await fetch(
+                    `/job/${jobId}`
+                );
 
             const data =
                 await response.json();
 
 
-            if (data.status === "queued") {
+            if (
+                data.status === "queued"
+            ) {
 
-                popup.style.display =
-                    "block";
+                showQueue(
+                    `${data.users_ahead} user(s) are before you.`
+                );
 
-                queueMessage.innerText =
-                    `${data.users_ahead} user(s) are before you.`;
             }
-
 
             else if (
                 data.status === "processing"
             ) {
 
-                popup.style.display =
-                    "block";
+                showQueue(
+                    "Your request is now being processed..."
+                );
 
-                queueMessage.innerText =
-                    "Your request is now being processed...";
             }
-
 
             else if (
                 data.status === "completed"
             ) {
 
-                popup.style.display =
-                    "none";
+                hideQueue();
 
                 resultElement.innerText =
                     data.result;
 
+                sendButton.disabled =
+                    false;
+
                 break;
             }
-
 
             else if (
                 data.status === "failed"
             ) {
 
-                popup.style.display =
-                    "none";
+                hideQueue();
 
                 resultElement.innerText =
                     "Generation failed: " +
                     data.error;
+
+                sendButton.disabled =
+                    false;
 
                 break;
             }
@@ -221,12 +789,17 @@
 
             await new Promise(
                 resolve =>
-                    setTimeout(resolve, 1000)
+                    setTimeout(
+                        resolve,
+                        1000
+                    )
             );
+
         }
+
     }
+
 </script>
 
 </body>
-
 </html>
