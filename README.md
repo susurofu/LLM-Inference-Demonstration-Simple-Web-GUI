@@ -181,6 +181,21 @@ Users waiting in the queue will see their current status while previous requests
 
 This allows a single local model or GPU to serve multiple demonstration users without attempting to run several inference jobs simultaneously.
 
+10. If you run it on a machine without graphic iterface (like a remote server), first, set password with set_access_password.py, modify instruction.txt and model.txt directly, naviagte to the project folder and run:
+
+```bash
+uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000
+
+```
+
+In the second terminal window, run:
+
+```bash
+cloudflared tunnel --url http://127.0.0.1:8000
+
+```
+
+In the output, you will get the temporary url to access the demonstration web page.
 
 
 ## Notes
