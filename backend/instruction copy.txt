@@ -1,5 +1,0 @@
-Sample instruction 
-
-This is a system for a fast deployment of demonstration interface of your local LLM. ometimes, we need to show models on our equipment but there is may be a messy and not very convenient.
-This interface is created for such demonstrations.
-Input your prompt and just wait for the response.
