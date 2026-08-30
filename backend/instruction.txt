@@ -1,1 +1,3 @@
-Let me send a simple instruction
+Sample instruction 
+
+Input your prompt and wait a bit.

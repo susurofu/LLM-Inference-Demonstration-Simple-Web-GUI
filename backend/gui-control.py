@@ -24,19 +24,19 @@ class SetupForm(tk.Tk):
         self.columnconfigure(1, weight=1)
 
         self.set_instructions_button = tk.Button(self, text="Instructions", command=self.set_instructions)
-        self.set_instructions_button.grid(row=1, column=0, columnspan=1, pady=20)
+        self.set_instructions_button.grid(row=1, column=0, padx=15, pady=20)
 
         self.cloudlare_btn = tk.Button(self, text="Cloudflared", command=self.set_cloudlare)
-        self.cloudlare_btn.grid(row=1, column=1, columnspan=1, pady=20)
+        self.cloudlare_btn.grid(row=1, column=1, padx=15, pady=20)
 
         self.set_model_btn = tk.Button(self, text="Set model (ollama)", command=self.set_model) # expand this and add selection of the model from list
-        self.set_model_btn.grid(row=1, column=2, columnspan=1, pady=20)
+        self.set_model_btn.grid(row=1, column=2, padx=15, pady=20)
 
         self.password_setup_btn = tk.Button(self, text="Set password", command=self.set_password) # expand this and add selection of the model from list
-        self.password_setup_btn.grid(row=1, column=3, columnspan=1, pady=20)
+        self.password_setup_btn.grid(row=2, column=1, padx=15, pady=20)
 
         self.run_server_btn = tk.Button(self, text="Start server", command=self.run_server) # expand this and add selection of the model from list
-        self.run_server_btn.grid(row=1, column=4, columnspan=1, pady=20)
+        self.run_server_btn.grid(row=2, column=2, padx=15, pady=20)
 
 
 

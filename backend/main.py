@@ -104,7 +104,7 @@ app.add_middleware(
     same_site="lax",
 
 
-    https_only=False, # for deploy turn it True
+    https_only=True, # for deploy turn it True
 )
 
 
