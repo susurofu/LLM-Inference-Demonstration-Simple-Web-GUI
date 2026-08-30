@@ -8,7 +8,7 @@ backend/._*
 backend/test.ipynb
 .SD_STORE
 .gitignore
-cloudflare_installs/__pycache__
+cbackend/cloudflare_installs/__pycache__
 .DS_Store
 .DS_Store
 future_fixes.txt
