@@ -12,11 +12,220 @@
 
     <h2>Instruction</h2>
 
+    <div id="file-content">
+    </div>
+
+    <script>
+        async function loadData() {
+            const response = await fetch("/instruction");
+
+            const data = await response.json();
+
+            document.getElementById("file-content").innerText =
+                data.text;
+        }
+
+        loadData();
+    </script>
+
+
+
+<h2>Enter text</h2>
+
+
+
+<form id="prompt-form">
+
+    <textarea
+        id="prompt-input"
+        rows="10"
+        cols="80"
+        required
+    ></textarea>
+
+    <button type="submit">
+        Send
+    </button>
+
+</form>
+
+<h2>Response</h2>
+
+<div id="result" rows="10"cols="80"></div>
+
+
+
+
     <form action="/logout" method="post">
         <button type="submit">
             Logout
         </button>
     </form>
+
+
+<div
+    id="queue-popup"
+    style="
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border: 1px solid #999;
+        padding: 30px;
+        z-index: 1000;
+    "
+>
+    <h2>Please wait</h2>
+
+    <p id="queue-message">
+        Your request is waiting in the queue.
+    </p>
+</div>
+
+<script>
+    const form = document.getElementById("prompt-form");
+
+    const resultElement =
+        document.getElementById("result");
+
+    const popup =
+        document.getElementById("queue-popup");
+
+    const queueMessage =
+        document.getElementById("queue-message");
+
+
+    form.addEventListener(
+        "submit",
+        async function(event) {
+
+            event.preventDefault();
+
+            const text =
+                document.getElementById(
+                    "prompt-input"
+                ).value;
+
+            const formData = new FormData();
+
+            formData.append(
+                "text",
+                text
+            );
+
+            resultElement.innerText =
+                "Submitting request...";
+
+            const response = await fetch(
+                "/process_prompt",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+            const data =
+                await response.json();
+
+            const jobId =
+                data.job_id;
+
+
+            if (data.users_ahead > 0) {
+
+                popup.style.display =
+                    "block";
+
+                queueMessage.innerText =
+                    `${data.users_ahead} user(s) are before you.`;
+
+            } else {
+
+                popup.style.display =
+                    "block";
+
+                queueMessage.innerText =
+                    "Your request is being processed.";
+            }
+
+
+            pollJob(jobId);
+        }
+    );
+
+
+    async function pollJob(jobId) {
+
+        while (true) {
+
+            const response = await fetch(
+                `/job/${jobId}`
+            );
+
+            const data =
+                await response.json();
+
+
+            if (data.status === "queued") {
+
+                popup.style.display =
+                    "block";
+
+                queueMessage.innerText =
+                    `${data.users_ahead} user(s) are before you.`;
+            }
+
+
+            else if (
+                data.status === "processing"
+            ) {
+
+                popup.style.display =
+                    "block";
+
+                queueMessage.innerText =
+                    "Your request is now being processed...";
+            }
+
+
+            else if (
+                data.status === "completed"
+            ) {
+
+                popup.style.display =
+                    "none";
+
+                resultElement.innerText =
+                    data.result;
+
+                break;
+            }
+
+
+            else if (
+                data.status === "failed"
+            ) {
+
+                popup.style.display =
+                    "none";
+
+                resultElement.innerText =
+                    "Generation failed: " +
+                    data.error;
+
+                break;
+            }
+
+
+            await new Promise(
+                resolve =>
+                    setTimeout(resolve, 1000)
+            );
+        }
+    }
+</script>
 
 </body>
 
