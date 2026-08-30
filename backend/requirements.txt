@@ -1,0 +1,7 @@
+pwdlib
+python-dotenv
+"pwdlib[argon2]"
+fastapi
+uvicorn
+python-multipart
+itsdangerous

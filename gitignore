@@ -1,0 +1,7 @@
+backend/.env
+.vscode
+._*
+backend/__pycache__
+backend/._*
+.git
+backend/test.ipynb

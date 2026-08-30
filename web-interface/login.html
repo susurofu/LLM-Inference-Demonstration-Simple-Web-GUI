@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+
+<body>
+
+    <h1>Demonstration Interface</h1>
+
+    <form action="/login" method="post">
+
+        <label for="password">
+            Password:
+        </label>
+
+        <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            autofocus
+        >
+
+        <button type="submit">
+            Login
+        </button>
+
+    </form>
+
+    <p id="error"></p>
+
+
+    <script>
+        const params = new URLSearchParams(
+            window.location.search
+        );
+
+        if (params.get("error") === "1") {
+            document.getElementById("error").innerText =
+                "Incorrect password.";
+        }
+    </script>
+
+</body>
+
+</html>
