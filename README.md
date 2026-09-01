@@ -52,7 +52,7 @@ For Ollama installation instructions, see the official Ollama documentation.
 1. Download or clone the project.
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/susurofu/LLM-Inference-Demonstration-Simple-Web-GUI
 cd lll-demo-web-gui
 ```
 
@@ -143,6 +143,11 @@ You can check your installed models with:
 
 ```bash
 ollama list
+```
+You can download models from Ollama with this script:
+
+```bash
+ollama pull <model-name> # e.g., ollama pull gemma4:31b
 ```
 
 ### 6. Start the server
